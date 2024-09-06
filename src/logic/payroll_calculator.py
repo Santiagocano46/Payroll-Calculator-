@@ -38,10 +38,10 @@ def calculate_daily_payment(salary):
     return salary / 30
 
 def calculate_hourly_payment(salary):
-    return salary / 240
+    return salary / 240 # Horas mensuales 
 
 def calculate_overtime_payment(hourly_payment, overtime_hours):
-    return hourly_payment * overtime_hours * 1.25
+    return hourly_payment * overtime_hours * 1.25 # Constante del 25% 
 
 def calculate_health_deductions(total_earned):
     return total_earned * 0.04

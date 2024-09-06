@@ -10,10 +10,10 @@ comisiones, horas extras. Con la información obtenida se hacen los respectivos 
 En caso de obtener algún dato incorrecto por parte del usuario se hará manejo de este error a través de las exepciones. 
 
 ## Cómo lo puedo correr?
-1. Clona el repositorio 
-2. Abre el Símbolo del Sistema y escribe el siguiente comando 
-3. `cd \Users\Usuario\OneDrive\Documentos\2024-2\Codigo_Limpio\payroll_calculator`  
-4. Luego `py src\console\main.py` para ejecutar la aplicación. 
+1. Instalar python 
+2. Clona el repositorio 
+3. Abre el Símbolo del Sistema y ubicate en la carpeta donde clonaste el repositorio. 
+5. Luego ejecuta el siguiente comando `py src\console\main.py` para ejecutar la aplicación. 
 
 ## Autores 
 Realizado por: 

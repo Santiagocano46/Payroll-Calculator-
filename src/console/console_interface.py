@@ -1,7 +1,7 @@
 import sys 
 sys.path.append("src")
 
-from logic.payroll_calculator import calculate_payroll, InvalidSalaryError, InvalidDaysWorkedError, InvalidHoursWorkedError, NegativeCommissionError, NegativeOvertimeHoursError
+from logic.payroll_calculator import *
 
 def get_user_input():
     name = input("Ingrese su nombre: ")
@@ -23,9 +23,24 @@ def display_payroll_info(name, payroll_info):
 
 def main():
     try:
+        # Obtener los datos del usuario
         name, salary, days_worked, hours_worked, commissions, overtime_hours = get_user_input()
-        payroll_info = calculate_payroll(salary, days_worked, hours_worked, commissions, overtime_hours)
+
+        # Crear instancia de PayrollCalculator sin pasar parámetros al __init__
+        calculator_console = PayrollCalculator(
+            salary=salary, 
+            days_worked=days_worked, 
+            hours_worked=hours_worked, 
+            commissions=commissions, 
+            overtime_hours=overtime_hours
+        )
+        
+        # Realizar el cálculo de la nómina
+        payroll_info = calculator_console.calculate_payroll()
+        
+        # Mostrar la información de la nómina
         display_payroll_info(name, payroll_info)
+
     except (InvalidSalaryError, InvalidDaysWorkedError, InvalidHoursWorkedError, NegativeCommissionError, NegativeOvertimeHoursError) as e:
         print(f"Error: {e}")
 

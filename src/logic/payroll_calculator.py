@@ -22,48 +22,55 @@ class NegativeOvertimeHoursError(PayrollException):
     """Raised when the overtime hours are negative"""
     pass
 
-# Definición de constantes
-DAYS_IN_MONTH = 30
-HOURS_IN_MONTH = 240
-OVERTIME_MULTIPLIER = 1.25
-HEALTH_DEDUCTION_PERCENTAGE = 0.04
-PENSION_DEDUCTION_PERCENTAGE = 0.04
-
-class PayrollCalculator:
-    def __init__(self, salary, days_worked, hours_worked, commissions, overtime_hours):
+class Usuario:
+    def __init__(self, nombre: str, cedula: str, salary: float, days_worked: int, hours_worked: int, commissions: float, overtime_hours: int):
+        self.nombre = nombre
+        self.cedula = cedula
         self.salary = salary
         self.days_worked = days_worked
         self.hours_worked = hours_worked
         self.commissions = commissions
         self.overtime_hours = overtime_hours
+
+class PayrollCalculator:
+
+    #Definicion de constantes
+    DAYS_IN_MONTH = 30
+    HOURS_IN_MONTH = 240
+    OVERTIME_MULTIPLIER = 1.25
+    HEALTH_DEDUCTION_PERCENTAGE = 0.04
+    PENSION_DEDUCTION_PERCENTAGE = 0.04 
+
+    def __init__(self, usuario: Usuario):
+        self.usuario = usuario
         self.final_payroll = None  # Variable de instancia para almacenar el resultado final
 
     def validate_inputs(self):
         if self.salary <= 0:
             raise InvalidSalaryError("El sueldo debe ser mayor que 0")
-        if self.days_worked <= 0 or self.days_worked > DAYS_IN_MONTH:
-            raise InvalidDaysWorkedError(f"Los días trabajados deben estar entre 1 y {DAYS_IN_MONTH}")
-        if self.hours_worked < 0 or self.hours_worked > 24:
+        if self.days_worked <= 0 or self.usuario.days_worked > PayrollCalculator.DAYS_IN_MONTH:
+            raise InvalidDaysWorkedError(f"Los días trabajados deben estar entre 1 y {PayrollCalculator.DAYS_IN_MONTH}")
+        if self.hours_worked < 0 or self.usuario.hours_worked > 24:
             raise InvalidHoursWorkedError("Las horas trabajadas deben estar entre 0 y 24")
-        if self.commissions < 0:
+        if self.usuario.commissions < 0:
             raise NegativeCommissionError("Las comisiones no pueden ser negativas")
-        if self.overtime_hours < 0:
+        if self.usuario.overtime_hours < 0:
             raise NegativeOvertimeHoursError("Las horas extras no pueden ser negativas")
 
     def calculate_daily_payment(self):
-        return self.salary / DAYS_IN_MONTH
+        return self.usuario.salary / PayrollCalculator.DAYS_IN_MONTH
 
     def calculate_hourly_payment(self):
-        return self.salary / HOURS_IN_MONTH  # Usamos la constante para horas mensuales
+        return self.usuario.salary / PayrollCalculator.HOURS_IN_MONTH  # Usamos la constante para horas mensuales
 
     def calculate_overtime_payment(self, hourly_payment):
-        return hourly_payment * self.overtime_hours * OVERTIME_MULTIPLIER  # Usamos la constante para el multiplicador de horas extras
+        return hourly_payment * self.usuario.overtime_hours * PayrollCalculator.OVERTIME_MULTIPLIER  # Usamos la constante para el multiplicador de horas extras
 
     def calculate_health_deductions(self, total_earned):
-        return total_earned * HEALTH_DEDUCTION_PERCENTAGE  # Deducción por salud
+        return total_earned * PayrollCalculator.HEALTH_DEDUCTION_PERCENTAGE  # Deducción por salud
 
     def calculate_pension_deductions(self, total_earned):
-        return total_earned * PENSION_DEDUCTION_PERCENTAGE  # Deducción por pensión
+        return total_earned * PayrollCalculator.PENSION_DEDUCTION_PERCENTAGE  # Deducción por pensión
 
     def calculate_payroll(self):
         self.validate_inputs()
@@ -72,7 +79,7 @@ class PayrollCalculator:
         hourly_payment = self.calculate_hourly_payment()
         overtime_payment = self.calculate_overtime_payment(hourly_payment)
 
-        total_earned = (daily_payment * self.days_worked) + self.commissions + overtime_payment
+        total_earned = (daily_payment * self.usuario.days_worked) + self.usuario.commissions + overtime_payment
         health_deductions = self.calculate_health_deductions(total_earned)
         pension_deductions = self.calculate_pension_deductions(total_earned)
 

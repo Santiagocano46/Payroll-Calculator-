@@ -73,23 +73,33 @@ class PayrollCalculator:
         return total_earned * PayrollCalculator.PENSION_DEDUCTION_PERCENTAGE  # Deducción por pensión
 
     def calculate_payroll(self):
+    # Validar las entradas del usuario antes de realizar cálculos
         self.validate_inputs()
 
-        daily_payment = self.calculate_daily_payment()
-        hourly_payment = self.calculate_hourly_payment()
-        overtime_payment = self.calculate_overtime_payment(hourly_payment)
+    # Calcular los pagos
+        daily_payment = self.calculate_daily_payment()  # Pago diario
+        hourly_payment = self.calculate_hourly_payment()  # Pago por hora
+        overtime_payment = self.calculate_overtime_payment(hourly_payment)  # Pago por horas extras
 
+    # Calcular el total ganado
         total_earned = (daily_payment * self.usuario.days_worked) + self.usuario.commissions + overtime_payment
-        health_deductions = self.calculate_health_deductions(total_earned)
-        pension_deductions = self.calculate_pension_deductions(total_earned)
 
+    # Calcular deducciones
+        health_deductions = self.calculate_health_deductions(total_earned)  # Deducciones de salud
+        pension_deductions = self.calculate_pension_deductions(total_earned)  # Deducciones de pensión
+
+    # Calcular el total de deducciones
         total_deductions = health_deductions + pension_deductions
+
+    # Calcular la nómina final
         self.final_payroll = total_earned - total_deductions
 
+    # Retornar un diccionario con todos los resultados
         return {
-            "total_earned": total_earned,
-            "health_deductions": health_deductions,
-            "pension_deductions": pension_deductions,
-            "total_deductions": total_deductions,
-            "final_payroll": self.final_payroll
-        }
+        "total_earned": total_earned,
+        "health_deductions": health_deductions,
+        "pension_deductions": pension_deductions,
+        "total_deductions": total_deductions,
+        "final_payroll": self.final_payroll
+    }
+

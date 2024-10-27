@@ -22,7 +22,21 @@ En caso de obtener algún dato incorrecto por parte del usuario se hará manejo 
 4. Abre el Símbolo del Sistema y ubicate en la carpeta donde clonaste el repositorio 
 5. Luego ejecuta el siguiente comando `py src\gui\payroll_gui.py` para ejecutar la aplicación. 
 
+## cómo puedo configurar el SecretConfig-sample.py?
+### Datos secretos que no deben publicarse en el repositorio
+
+Diligencie estos datos y guarde este archivo como SecretConfig.py en la carpeta src
+para poder ejecutar la aplicación
+
+PGDATABASE = "ESCRIBA EL NOMBRE DE LA BASE DE DATOS"
+PGUSER = "ESCRIBA EL USUARIO DE LA DB"
+PGPASSWORD = "ESCRIBA LA CONSTRASEÑA"
+PGHOST = "ESCRIBA LA DIRECCION DNS O DIRECCION IP DEL SERVIDOR"
+PGPORT = 5432 # POR DEFECTO ES 5432, PERO PUEDE CAMBIAR EN SU DB
 ## Autores 
 Realizado por: 
 - Alejandro Bustamante 
 - Tomas López 
+## Correciones por:
+- Juan José Peñuela Herrera
+- Santiago Cano

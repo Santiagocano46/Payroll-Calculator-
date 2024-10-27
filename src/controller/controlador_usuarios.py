@@ -36,7 +36,6 @@ def CrearTabla():
         cursor.execute( sql )
         cursor.connection.commit()
     except:
-        # SI LLEGA AQUI, ES PORQUE LA TABLA YA EXISTE
         cursor.connection.rollback()
 
 #Insertar datos en la BD
@@ -80,7 +79,7 @@ def Actualizar(usuario: Usuario):
             where cedula='{usuario.cedula}'
         """)
         cursor.connection.commit()
-    except Exception as e:
+    *
         cursor.connection.rollback()
         raise e
 
@@ -95,7 +94,7 @@ def Borrar(cedula: str):
         cursor.execute(sql)
         cursor.connection.commit()
     except Exception as e:
-        cursor.connection.rollback()  # Asegurarse de que se llama el rollback
+        cursor.connection.rollback()
         raise e
 
 
@@ -126,4 +125,4 @@ def BuscarPorCedula(cedula: str):
         return f"Error al buscar usuario: {e}"
     
     finally:
-        cursor.close()  # Asegúrate de cerrar el cursor después de usarlo
+        cursor.close()

@@ -40,3 +40,18 @@ Realizado por:
 ## Correciones por:
 - Juan José Peñuela Herrera
 - Santiago Cano
+
+## Para Clonar el repositorio
+```markdown
+https://github.com/Santiagocano46/Payroll-Calculator-
+```
+
+## Para Ejecutar las puebas unitarias del controlador
+```markdown
+python test/controller_test.py
+```
+
+## Para ejecutar la consola de la BD
+```markdown
+python console/ConsolaBD.py
+```

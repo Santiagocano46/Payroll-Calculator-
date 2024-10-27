@@ -1,13 +1,20 @@
-"""
-    Pertenece a la capa de Acceso a Datos
-
-    Controla las operaciones de almacenamiento de la clase Usuario
-"""
 import sys
 sys.path.append("src")
 from logic.payroll_calculator import Usuario
 import psycopg2
 import SecretConfig
+
+class ErrorInsertar(Exception):
+    pass
+
+class ErrorActualizar(Exception):
+    pass
+
+class ErrorBuscar(Exception):
+    pass
+
+class ErrorBorrar(Exception):
+    pass
 
 def ObtenerCursor( ) :
     """
@@ -32,11 +39,22 @@ def CrearTabla():
         sql = f.read()
 
     cursor = ObtenerCursor()
+
     try:
         cursor.execute( sql )
         cursor.connection.commit()
     except:
         cursor.connection.rollback()
+
+def BorrarFilas():
+    """
+    Borra todas las filas de la tabla (DELETE)
+    ATENCION: EXTREMADAMENTE PELIGROSO.
+    """
+    sql = "Delete from usuarios"
+    cursor = ObtenerCursor()
+    cursor.execute( sql )
+    cursor.connection.commit()
 
 #Insertar datos en la BD
 
@@ -45,6 +63,9 @@ def Insertar( usuario : Usuario ):
 
     try:
         cursor = ObtenerCursor()
+        if BuscarPorCedulaUsuarioExistente(usuario.cedula) is False:
+            raise ErrorInsertar(f"Ya existe un registro asociado a la cedula = {usuario.cedula}")
+
         cursor.execute(f"""
         insert into usuarios (
             cedula, nombre,  salario,  dias_trabajados,  horas_trabajadas, comisiones, horas_extras)
@@ -56,8 +77,7 @@ def Insertar( usuario : Usuario ):
         
         cursor.connection.commit()
     except:
-        cursor.connection.rollback() 
-        raise Exception(f"No fue posible insertar el usuario : {usuario.cedula} ")
+        raise ErrorInsertar(f"No se pudo insertar el registro en la BD")
     
 #Modificar Datos
     
@@ -65,8 +85,10 @@ def Actualizar(usuario: Usuario):
     """
     Actualiza los datos de un usuario en la base de datos.
     """
-    cursor = ObtenerCursor()
     try:
+        cursor = ObtenerCursor()
+        if BuscarPorCedulaUsuarioExistente(usuario.cedula) == True:
+            raise ErrorActualizar
         cursor.execute(f"""
             update usuarios
             set 
@@ -79,23 +101,24 @@ def Actualizar(usuario: Usuario):
             where cedula='{usuario.cedula}'
         """)
         cursor.connection.commit()
-    *
         cursor.connection.rollback()
-        raise e
+    except:
+        raise ErrorActualizar(f"Ya existe un registro asociado a la cedula = {usuario.cedula}")
 
 
 
 #Delete
 def Borrar(cedula: str):
     """ Elimina la fila que contiene a un usuario en la BD """
-    cursor = ObtenerCursor()
-    try:
+    try:    
+        cursor = ObtenerCursor()
         sql = f"DELETE from usuarios where cedula = '{cedula}'"
+        if BuscarPorCedulaUsuarioExistente(cedula) == True:
+            raise ErrorBorrar
         cursor.execute(sql)
         cursor.connection.commit()
-    except Exception as e:
-        cursor.connection.rollback()
-        raise e
+    except:
+        raise ErrorBorrar(f"No se pudo borrar el registro asociado a la cedula = {cedula}")
 
 
 #Consultar Datos 
@@ -103,26 +126,30 @@ def Borrar(cedula: str):
 def BuscarPorCedula(cedula: str):
     """ Busca un usuario por el número de Cedula """
     cursor = ObtenerCursor()
-    
-    try:
-        cursor.execute("""
-            SELECT cedula, nombre, salario, dias_trabajados, horas_trabajadas, comisiones, horas_extras 
-            FROM usuarios 
-            WHERE cedula = %s
-        """, (cedula,))
+    cursor.execute(f"""
+        SELECT cedula, nombre, salario, dias_trabajados, horas_trabajadas, comisiones, horas_extras 
+        FROM usuarios 
+        WHERE cedula = '{cedula}' """)
         
-        fila = cursor.fetchone()
+    fila = cursor.fetchone()
         
-        if fila is None:
-            return f"No se encontró un usuario con la cédula: {cedula}"
+    if fila is None:
+        raise ErrorBuscar(f"No se encontro registro asocaido a la cedula = {cedula}")
         
-        msg = (f"El usuario que tiene por cédula: {fila[0]}, nombre: {fila[1]}, salario: {fila[2]}, "
-               f"dias_trabajados: {fila[3]}, horas_trabajadas: {fila[4]}, comisiones: {fila[5]}, "
-               f"horas_extras: {fila[6]}")
-        return msg
+    return Usuario(fila[1],fila[0],fila[2],fila[3],fila[4],fila[5],fila[6])
     
-    except Exception as e:
-        return f"Error al buscar usuario: {e}"
-    
-    finally:
-        cursor.close()
+def BuscarPorCedulaUsuarioExistente(cedula: str):
+    """ Busca un usuario por el número de Cedula """
+    cursor = ObtenerCursor()
+    cursor.execute("""
+        SELECT cedula, nombre, salario, dias_trabajados, horas_trabajadas, comisiones, horas_extras 
+        FROM usuarios 
+        WHERE cedula = %s
+    """, (cedula,))
+        
+    fila = cursor.fetchone()
+        
+    if fila is None:
+        return True
+    else:
+        return False
